@@ -1,24 +1,62 @@
 package org.example.javazero_1;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-enum GameStatus implements Status {
-        LOST, WON, PLAYING
-}
+
 public class HangmanImpl implements Hangman{
     private String word;
     private Status status;
-    private int lifes;
-    private boolean[] foundLetters;
-    private int numberGuessed;
+    private int lives;
+    private boolean[] openedLetters;
+    private int numOpened;
 
     private int[] prevPos;
     private Map<Character, Integer> lastPos;
+
+
+    public HangmanImpl(String word, int lives) {
+        this.lives = lives;
+        setWord(word);
+    }
     @Override
     public String getWord() {
         return word;
     }
+
+    @Override
+    public boolean isLetterGuessed(int pos) {
+        return openedLetters[pos];
+    }
+
+    @Override
+    public void start() {
+        start(0);
+    }
+
+    @Override
+    public void start(int numOpened) {
+        Random random = new Random();
+        this.numOpened = numOpened;
+        this.status = Status.PLAYING;
+        List<Integer> randomNumbers = random.ints(0, word.length())
+                .distinct()
+                .limit(numOpened)
+                .boxed()
+                .toList();
+
+        for (int ind : randomNumbers) {
+            openedLetters[ind] = true;
+        }
+    }
+
+    @Override
+    public void openLetter(int pos) {
+        openedLetters[pos] = true;
+    }
+
     @Override
     public Status getStatus() {
         return status;
@@ -26,36 +64,33 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public int numberGuessed() {
-        return numberGuessed;
+        return numOpened;
     }
 
-    public boolean[] getFoundLetters() {
-        return foundLetters;
-    }
 
     // Maybe I should add exception for calling method while it's in wrong state
     @Override
     public boolean guessLetter(char c) {
-        if (status != GameStatus.PLAYING) {
+        if (status != Status.PLAYING) {
             return false;
         }
         Integer ind = lastPos.get(c);
         if (ind == null) {
-            lifes--;
-            if (lifes <= 0) {
-                status = GameStatus.LOST;
+            lives--;
+            if (lives <= 0) {
+                status = Status.LOST;
             }
             return false;
         }
         lastPos.remove(c);
         while (ind != -1) {
-            numberGuessed++;
-            foundLetters[ind] = true;
+            numOpened++;
+            openedLetters[ind] = true;
             ind = prevPos[ind];
         }
 
-        if (numberGuessed == word.length()) {
-            status = GameStatus.WON;
+        if (numOpened == word.length()) {
+            status = Status.WON;
         }
 
         return true;
@@ -66,10 +101,11 @@ public class HangmanImpl implements Hangman{
     @Override
     public void setWord(String word) {
         lastPos = new HashMap<Character, Integer>();
-        foundLetters = new boolean[word.length()];
+        prevPos = new int[word.length()];
+        openedLetters = new boolean[word.length()];
         this.word = word;
-        this.status = GameStatus.PLAYING;
-        this.numberGuessed = 0;
+        this.status = Status.PREPARED;
+        this.numOpened = 0;
         for (int i = 0; i < word.length(); ++i) {
             prevPos[i] = lastPos.getOrDefault(word.charAt(i), -1);
             lastPos.put(word.charAt(i), i);

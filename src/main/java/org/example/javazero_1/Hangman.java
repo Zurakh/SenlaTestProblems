@@ -6,4 +6,8 @@ public interface Hangman {
     public void setWord(String word);
     public int numberGuessed();
     public String getWord();
+    public boolean isLetterGuessed(int pos);
+    public void start();
+    public void start(int openedLetters);
+    public void openLetter(int pos);
 }

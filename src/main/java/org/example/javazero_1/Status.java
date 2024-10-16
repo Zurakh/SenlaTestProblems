@@ -1,4 +1,5 @@
 package org.example.javazero_1;
 
-public interface Status {
+public enum Status {
+    LOST, WON, PLAYING, PREPARED
 }
