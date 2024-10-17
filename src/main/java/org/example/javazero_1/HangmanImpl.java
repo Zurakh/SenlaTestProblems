@@ -18,6 +18,7 @@ public class HangmanImpl implements Hangman{
 
 
     public HangmanImpl(String word, int lives) {
+        assert lives > 0;
         this.lives = lives;
         setWord(word);
     }
@@ -38,8 +39,8 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public void start(int numOpened) {
+        assert numOpened >= 0 && numOpened < word.length();
         Random random = new Random();
-        this.numOpened = numOpened;
         this.status = Status.PLAYING;
         List<Integer> randomNumbers = random.ints(0, word.length())
                 .distinct()
@@ -48,13 +49,18 @@ public class HangmanImpl implements Hangman{
                 .toList();
 
         for (int ind : randomNumbers) {
-            openedLetters[ind] = true;
+            openLetter(ind);
         }
     }
 
     @Override
     public void openLetter(int pos) {
+        assert pos >= 0 && pos < word.length();
         openedLetters[pos] = true;
+        numOpened++;
+        if (numOpened == word.length()) {
+            status = Status.WON;
+        }
     }
 
     @Override
@@ -68,38 +74,35 @@ public class HangmanImpl implements Hangman{
     }
 
 
-    // Maybe I should add exception for calling method while it's in wrong state
     @Override
-    public boolean guessLetter(char c) {
-        if (status != Status.PLAYING) {
-            return false;
+    public int guessLetter(char letter) {
+        assert status == Status.PLAYING;
+
+        Integer index = lastPos.getOrDefault(letter, -1);
+        int counter = 0;
+
+        if (index == -1) {
+            setLives(lives - 1);
+        } else {
+            lastPos.remove(letter);
         }
-        Integer ind = lastPos.get(c);
-        if (ind == null) {
-            lives--;
-            if (lives <= 0) {
-                status = Status.LOST;
+
+        while (index != -1) {
+            if (!isLetterGuessed(index)) {
+                openLetter(index);
+                counter++;
             }
-            return false;
-        }
-        lastPos.remove(c);
-        while (ind != -1) {
-            numOpened++;
-            openedLetters[ind] = true;
-            ind = prevPos[ind];
+            index = prevPos[index];
         }
 
-        if (numOpened == word.length()) {
-            status = Status.WON;
-        }
-
-        return true;
+        return counter;
     }
 
 
     // Validate words with throwing exceptions
     @Override
     public void setWord(String word) {
+        assert word.length() > 0;
         lastPos = new HashMap<Character, Integer>();
         prevPos = new int[word.length()];
         openedLetters = new boolean[word.length()];
@@ -109,6 +112,21 @@ public class HangmanImpl implements Hangman{
         for (int i = 0; i < word.length(); ++i) {
             prevPos[i] = lastPos.getOrDefault(word.charAt(i), -1);
             lastPos.put(word.charAt(i), i);
+        }
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    // add exception to limit lives value
+    public void setLives(int lives) {
+        assert lives >= 0;
+        this.lives = lives;
+        if (lives <= 0) {
+            status = Status.LOST;
+        } else if (status == Status.LOST) {
+            status = Status.PREPARED;
         }
     }
 }

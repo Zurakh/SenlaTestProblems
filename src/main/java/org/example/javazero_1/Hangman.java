@@ -2,7 +2,7 @@ package org.example.javazero_1;
 
 public interface Hangman {
     public Status getStatus();
-    public boolean guessLetter(char c);
+    public int guessLetter(char c);
     public void setWord(String word);
     public int numberGuessed();
     public String getWord();
@@ -10,4 +10,7 @@ public interface Hangman {
     public void start();
     public void start(int openedLetters);
     public void openLetter(int pos);
+
+    public int getLives();
+    public void setLives(int lives);
 }

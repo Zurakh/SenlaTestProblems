@@ -6,28 +6,23 @@ import java.io.InputStreamReader;
 
 public class Solution {
     public static void main(String[] args) throws IOException {
-        WordProvider wordProvider = new WordProviderHardCoded();
+        WordProvider wordProvider = new WordProviderHardCodedEnglishSeven();
         String word = wordProvider.getWord();
         Hangman game = new HangmanImpl(word, 3);
         ViewImp view = new ViewImp(game);
+        HangmanHolder holder = new HangmanHolder(wordProvider, view, game);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        game.start(1);
-        System.out.println(view.printOpenedLetters());
+        holder.start(2);
 
         while (game.getStatus() == Status.PLAYING) {
-            char input = reader.readLine().charAt(0);
-            boolean res = game.guessLetter(input);
-            if (!res) {
-                System.out.println("No letter");
-            }
-            System.out.println(view.printOpenedLetters());
+            String input = reader.readLine();
+            if (input.length() == 0)
+                continue;
+
+            holder.guessLetter(input.charAt(0));
         }
-        if (game.getStatus() == Status.LOST) {
-            System.out.println("You lost");
-        } else {
-            System.out.println("You won");
-        }
+
     }
 }
