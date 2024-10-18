@@ -1,17 +1,70 @@
 package org.example.javazero_1;
 
-public class ViewImp implements ViewManager {
-    private final Hangman hangman;
-    public ViewImp(Hangman hangman) {
-        this.hangman = hangman;
-    }
+public class ViewImp implements View {
+
+    private static final String[] hangAsci = {
+            "+---+\n" +
+                    "  |   |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "=========",
+
+            "  +---+\n" +
+                    "  |   |\n" +
+                    "  O   |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "=========",
+
+            " +---+\n" +
+                    "  |   |\n" +
+                    "  O   |\n" +
+                    "  |   |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "=========",
+
+            "  +---+\n" +
+                    "  |   |\n" +
+                    "  O   |\n" +
+                    " /|   |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "=========",
+
+            "  +---+\n" +
+                    "  |   |\n" +
+                    "  O   |\n" +
+                    " /|\\  |\n" +
+                    "      |\n" +
+                    "      |\n" +
+                    "=========",
+
+            "  +---+\n" +
+                    "  |   |\n" +
+                    "  O   |\n" +
+                    " /|\\  |\n" +
+                    " /    |\n" +
+                    "      |\n" +
+                    "=========",
+
+            "  +---+\n" +
+                    "  |   |\n" +
+                    "  O   |\n" +
+                    " /|\\  |\n" +
+                    " / \\  |\n" +
+                    "      |\n" +
+                    "========="
+    };
 
     @Override
-    public String getOpenedLetters() {
+    public String getOpenedLetters(String word, boolean[] lettersStatus) {
         var sb = new StringBuilder();
-        String word = hangman.getWord();
         for (int i = 0; i < word.length(); ++i) {
-            if (hangman.isLetterGuessed(i)) {
+            if (lettersStatus[i]) {
                 sb.append(word.charAt(i));
             } else {
                 sb.append("_");
@@ -23,6 +76,10 @@ public class ViewImp implements ViewManager {
     @Override
     public String getFailGuessResult() {
         return "No such letters found";
+    }
+
+    public String getFailGuessResult(int stage) {
+        return "No such letters found\n" + getHangedMan(stage);
     }
 
     @Override
@@ -46,12 +103,16 @@ public class ViewImp implements ViewManager {
     }
 
     @Override
-    public String getWord() {
-        return hangman.getWord();
+    public String getWordView(String word) {
+        return word;
     }
 
     @Override
-    public String getRemainingLives() {
-        return hangman.getLives() + " live(s) remaining";
+    public String getRemainingLivesView(int lives) {
+        return lives + " live(s) remaining";
+    }
+
+    public String getHangedMan(int stage) {
+        return hangAsci[stage];
     }
 }

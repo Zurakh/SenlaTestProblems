@@ -13,4 +13,7 @@ public interface Hangman {
 
     public int getLives();
     public void setLives(int lives);
+
+    public boolean[] getLettersStatus();
+    public int getFails();
 }

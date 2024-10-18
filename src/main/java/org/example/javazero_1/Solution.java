@@ -8,8 +8,8 @@ public class Solution {
     public static void main(String[] args) throws IOException {
         WordProvider wordProvider = new WordProviderHardCodedEnglishSeven();
         String word = wordProvider.getWord();
-        Hangman game = new HangmanImpl(word, 3);
-        ViewImp view = new ViewImp(game);
+        Hangman game = new HangmanImpl(word, 6);
+        ViewImp view = new ViewImp();
         HangmanHolder holder = new HangmanHolder(wordProvider, view, game);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

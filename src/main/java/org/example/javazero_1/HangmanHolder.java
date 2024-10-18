@@ -2,12 +2,13 @@ package org.example.javazero_1;
 
 public class HangmanHolder {
     private final WordProvider wordProvider;
-    private final ViewManager viewManager;
+    private final View view;
     private final Hangman hangman;
 
-    public HangmanHolder(WordProvider wordProvider, ViewManager viewManager, Hangman hangman) {
+    public HangmanHolder(WordProvider wordProvider, View view, Hangman hangman) {
+        assert(wordProvider != null && view != null && hangman != null);
         this.wordProvider = wordProvider;
-        this.viewManager = viewManager;
+        this.view = view;
         this.hangman = hangman;
     }
 
@@ -16,13 +17,9 @@ public class HangmanHolder {
         return wordProvider;
     }
 
-
-
-    public ViewManager getViewManager() {
-        return viewManager;
+    public View getViewManager() {
+        return view;
     }
-
-
 
     public Hangman getHangman() {
         return hangman;
@@ -39,7 +36,7 @@ public class HangmanHolder {
 
     public void start(int openedLetters) {
         getHangman().start(openedLetters);
-        System.out.println(viewManager.getOpenedLetters());
+        System.out.println(view.getOpenedLetters(hangman.getWord(), hangman.getLettersStatus()));
     }
 
 
@@ -59,22 +56,24 @@ public class HangmanHolder {
         assert hangman.getStatus() == Status.PLAYING;
         int res = getHangman().guessLetter(c);
         if (res <= 0) {
-            System.out.println(viewManager.getFailGuessResult());
             if (hangman.getStatus() == Status.LOST) {
-                System.out.println(viewManager.getWord());
-                System.out.println(viewManager.getLostResult());
+                System.out.println(view.getWordView(hangman.getWord()));
+                System.out.println(view.getLostResult());
+                System.out.println(view.getFailGuessResult(hangman.getFails()));
                 return;
             }
+            System.out.println(view.getFailGuessResult());
         } else {
-            System.out.println(viewManager.getSuccessGuessResult(res));
+            System.out.println(view.getSuccessGuessResult(res));
             if (hangman.getStatus() == Status.WON) {
-                System.out.println(viewManager.getWord());
-                System.out.println(viewManager.getWonResult());
+                System.out.println(view.getWordView(hangman.getWord()));
+                System.out.println(view.getWonResult());
                 return;
             }
         }
-        System.out.println(viewManager.getOpenedLetters());
-        System.out.println(viewManager.getRemainingLives());
+        System.out.println(view.getOpenedLetters(hangman.getWord(), hangman.getLettersStatus()));
+        System.out.println(view.getRemainingLivesView(hangman.getLives()));
+        System.out.println(view.getFailGuessResult(hangman.getFails()));
     }
 
     public void setWord(String word) {

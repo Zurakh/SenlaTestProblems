@@ -1,9 +1,6 @@
 package org.example.javazero_1;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 public class HangmanImpl implements Hangman{
@@ -15,10 +12,11 @@ public class HangmanImpl implements Hangman{
 
     private int[] prevPos;
     private Map<Character, Integer> lastPos;
+    private int failCount;
 
 
     public HangmanImpl(String word, int lives) {
-        assert lives > 0;
+        assert lives > 0 && word != null && word.length() > 0;
         this.lives = lives;
         setWord(word);
     }
@@ -29,6 +27,7 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public boolean isLetterGuessed(int pos) {
+        assert pos >= 0 && pos < word.length();
         return openedLetters[pos];
     }
 
@@ -42,6 +41,7 @@ public class HangmanImpl implements Hangman{
         assert numOpened >= 0 && numOpened < word.length();
         Random random = new Random();
         this.status = Status.PLAYING;
+        failCount = 0;
         List<Integer> randomNumbers = random.ints(0, word.length())
                 .distinct()
                 .limit(numOpened)
@@ -83,6 +83,7 @@ public class HangmanImpl implements Hangman{
 
         if (index == -1) {
             setLives(lives - 1);
+            failCount++;
         } else {
             lastPos.remove(letter);
         }
@@ -103,6 +104,7 @@ public class HangmanImpl implements Hangman{
     @Override
     public void setWord(String word) {
         assert word.length() > 0;
+        word = word.split(" ")[0];
         lastPos = new HashMap<Character, Integer>();
         prevPos = new int[word.length()];
         openedLetters = new boolean[word.length()];
@@ -119,7 +121,6 @@ public class HangmanImpl implements Hangman{
         return lives;
     }
 
-    // add exception to limit lives value
     public void setLives(int lives) {
         assert lives >= 0;
         this.lives = lives;
@@ -128,5 +129,15 @@ public class HangmanImpl implements Hangman{
         } else if (status == Status.LOST) {
             status = Status.PREPARED;
         }
+    }
+
+    @Override
+    public boolean[] getLettersStatus() {
+        return Arrays.copyOf(openedLetters, openedLetters.length);
+    }
+
+    @Override
+    public int getFails() {
+        return failCount;
     }
 }
