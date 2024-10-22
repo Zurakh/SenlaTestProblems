@@ -1,4 +1,4 @@
-package org.example.Task_2;
+package org.example.javazero_2;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
