@@ -30,11 +30,16 @@ public class HangmanHolder {
     }
 
     public void start() {
-        String word = wordProvider.getWord();
-        getHangman().setWord(word);
+        start(0);
     }
 
     public void start(int openedLetters) {
+        String word = wordProvider.getWord();
+        start(word, openedLetters);;
+    }
+
+    public void start(String word, int openedLetters) {
+        getHangman().setWord(word);
         getHangman().start(openedLetters);
         System.out.println(view.getOpenedLetters(hangman.getWord(), hangman.getLettersStatus()));
     }
@@ -55,25 +60,26 @@ public class HangmanHolder {
     public void guessLetter(char c) {
         assert hangman.getStatus() == Status.PLAYING;
         int res = getHangman().guessLetter(c);
+
         if (res <= 0) {
+            System.out.println(view.getFailGuessResult(hangman.getFails()));
+            System.out.println(view.getRemainingLivesView(hangman.getLives()));
             if (hangman.getStatus() == Status.LOST) {
                 System.out.println(view.getWordView(hangman.getWord()));
                 System.out.println(view.getLostResult());
-                System.out.println(view.getFailGuessResult(hangman.getFails()));
+                System.out.println(view.getRemainingLivesView(hangman.getLives()));
                 return;
             }
-            System.out.println(view.getFailGuessResult());
-        } else {
-            System.out.println(view.getSuccessGuessResult(res));
-            if (hangman.getStatus() == Status.WON) {
-                System.out.println(view.getWordView(hangman.getWord()));
-                System.out.println(view.getWonResult());
-                return;
-            }
+            System.out.println(view.getOpenedLetters(hangman.getWord(), hangman.getLettersStatus()));
+            return;
+        }
+        System.out.println(view.getSuccessGuessResult(res));
+        if (hangman.getStatus() == Status.WON) {
+            System.out.println(view.getWordView(hangman.getWord()));
+            System.out.println(view.getWonResult());
+            System.out.println(view.getRemainingLivesView(hangman.getLives()));
         }
         System.out.println(view.getOpenedLetters(hangman.getWord(), hangman.getLettersStatus()));
-        System.out.println(view.getRemainingLivesView(hangman.getLives()));
-        System.out.println(view.getFailGuessResult(hangman.getFails()));
     }
 
     public void setWord(String word) {

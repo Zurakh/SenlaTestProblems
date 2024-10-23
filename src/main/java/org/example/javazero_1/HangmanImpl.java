@@ -7,6 +7,7 @@ public class HangmanImpl implements Hangman{
     private String word;
     private Status status;
     private int lives;
+    private int initLives;
     private boolean[] openedLetters;
     private int numOpened;
 
@@ -15,10 +16,15 @@ public class HangmanImpl implements Hangman{
     private int failCount;
 
 
-    public HangmanImpl(String word, int lives) {
-        assert lives > 0 && word != null && word.length() > 0;
-        this.lives = lives;
+    public HangmanImpl(String word, int initLives) {
+        assert initLives > 0 && word != null && word.length() > 0;
+        this.lives = initLives;
         setWord(word);
+    }
+    public HangmanImpl(int initLives) {
+        assert initLives > 0;
+        this.initLives = initLives;
+        status = Status.UNPREPARED;
     }
     @Override
     public String getWord() {
@@ -38,10 +44,14 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public void start(int numOpened) {
-        assert numOpened >= 0 && numOpened < word.length();
+        assert numOpened >= 0 && numOpened < word.length() && status == Status.PREPARED;
+
+        //Arrays.fill(openedLetters, false);
+
         Random random = new Random();
         this.status = Status.PLAYING;
         failCount = 0;
+
         List<Integer> randomNumbers = random.ints(0, word.length())
                 .distinct()
                 .limit(numOpened)
@@ -51,6 +61,9 @@ public class HangmanImpl implements Hangman{
         for (int ind : randomNumbers) {
             openLetter(ind);
         }
+
+        this.lives = initLives;
+        System.out.println("Lives: " + this.lives);
     }
 
     @Override
@@ -108,13 +121,16 @@ public class HangmanImpl implements Hangman{
         lastPos = new HashMap<Character, Integer>();
         prevPos = new int[word.length()];
         openedLetters = new boolean[word.length()];
+
         this.word = word;
         this.status = Status.PREPARED;
-        this.numOpened = 0;
+
         for (int i = 0; i < word.length(); ++i) {
             prevPos[i] = lastPos.getOrDefault(word.charAt(i), -1);
             lastPos.put(word.charAt(i), i);
         }
+
+        this.numOpened = 0;
     }
 
     public int getLives() {
@@ -124,7 +140,7 @@ public class HangmanImpl implements Hangman{
     public void setLives(int lives) {
         assert lives >= 0;
         this.lives = lives;
-        if (lives <= 0) {
+        if (lives == 0) {
             status = Status.LOST;
         } else if (status == Status.LOST) {
             status = Status.PREPARED;

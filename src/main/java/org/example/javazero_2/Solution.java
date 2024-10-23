@@ -26,6 +26,8 @@ public class Solution {
 
         CurrencyConverter converter = new CurrencyConverter(currencyRates);
 
+        // lookup table with strings as keys and class instances with single method
+        // Not sure is it more preferable than switch
         Map<String, Command> commandMap = new HashMap<>();
         commandMap.put("help", new Help());
         commandMap.put("all", new ConvertToEveryCurrency(reader, converter));

@@ -1,7 +1,6 @@
-package org.example.task_3;
+package org.example.javazero_3;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
