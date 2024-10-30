@@ -15,17 +15,25 @@ public class HangmanImpl implements Hangman{
     private Map<Character, Integer> lastPos;
     private int failCount;
 
-
     public HangmanImpl(String word, int initLives) {
-        assert initLives > 0 && word != null && word.length() > 0;
+        if (initLives <= 0) {
+            throw new IllegalArgumentException("Number of lives must greater than 0");
+        }
+        if (word == null || word.isEmpty()) {
+            throw new IllegalArgumentException("Word myst be not null and not empty");
+        }
         this.lives = initLives;
         setWord(word);
     }
+
     public HangmanImpl(int initLives) {
-        assert initLives > 0;
+        if (initLives <= 0) {
+            throw new IllegalArgumentException("Number of lives must be greater than 0");
+        }
         this.initLives = initLives;
         status = Status.UNPREPARED;
     }
+
     @Override
     public String getWord() {
         return word;
@@ -33,7 +41,9 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public boolean isLetterGuessed(int pos) {
-        assert pos >= 0 && pos < word.length();
+        if (pos <= 0 || pos >= word.length()) {
+            throw new IllegalArgumentException("Letter position must fit in the word bounds");
+        }
         return openedLetters[pos];
     }
 
@@ -44,9 +54,13 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public void start(int numOpened) {
-        assert numOpened >= 0 && numOpened < word.length() && status == Status.PREPARED;
-
-        //Arrays.fill(openedLetters, false);
+        if (numOpened < 0 || numOpened >= word.length()) {
+            throw new IllegalArgumentException("Number of opened letter must be less than size of word" +
+                    "and can't be negative");
+        }
+        if (status != Status.PREPARED) {
+            throw new IllegalStateException("Game status must be PREPARED to start it");
+        }
 
         Random random = new Random();
         this.status = Status.PLAYING;
@@ -68,7 +82,9 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public void openLetter(int pos) {
-        assert pos >= 0 && pos < word.length();
+        if (pos <= 0 || pos >= word.length()) {
+            throw new IllegalArgumentException("Letter position must fit in the word bounds");
+        }
         openedLetters[pos] = true;
         numOpened++;
         if (numOpened == word.length()) {
@@ -89,7 +105,9 @@ public class HangmanImpl implements Hangman{
 
     @Override
     public int guessLetter(char letter) {
-        assert status == Status.PLAYING;
+        if (status != Status.PLAYING) {
+            throw new IllegalStateException("Game not started");
+        }
 
         Integer index = lastPos.getOrDefault(letter, -1);
         int counter = 0;
@@ -116,9 +134,12 @@ public class HangmanImpl implements Hangman{
     // Validate words with throwing exceptions
     @Override
     public void setWord(String word) {
-        assert word.length() > 0;
+        if (word == null || word.isEmpty()) {
+            throw new IllegalArgumentException("Word myst be not null and not empty");
+        }
+
         word = word.split(" ")[0];
-        lastPos = new HashMap<Character, Integer>();
+        lastPos = new HashMap<>();
         prevPos = new int[word.length()];
         openedLetters = new boolean[word.length()];
 
@@ -138,7 +159,9 @@ public class HangmanImpl implements Hangman{
     }
 
     public void setLives(int lives) {
-        assert lives >= 0;
+        if (initLives < 0) {
+            throw new IllegalArgumentException("Number of lives can't be less than 0");
+        }
         this.lives = lives;
         if (lives == 0) {
             status = Status.LOST;
