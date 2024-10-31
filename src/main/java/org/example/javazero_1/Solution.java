@@ -18,10 +18,10 @@ public class Solution {
             holder.start(2);
             while (game.getStatus() == Status.PLAYING) {
                 input = reader.readLine();
-                if (input.length() == 0)
+                if (input.isEmpty())
                     continue;
 
-                holder.guessLetter(input.charAt(0));
+                holder.guessLetter(Character.toLowerCase(input.charAt(0)));
             }
             System.out.println("Press r to restart");
             System.out.println("Press any other key to quit");

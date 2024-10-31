@@ -40,6 +40,7 @@ public class Solution {
             }
         });
 
+        System.out.println("Type \"help\" to get help");
         String operaton = "";
 
         while (!"quit".equals(operaton)) {

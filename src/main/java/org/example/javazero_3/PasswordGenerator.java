@@ -1,5 +1,8 @@
 package org.example.javazero_3;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -65,7 +68,14 @@ public class PasswordGenerator {
         return generatePassword(random.nextInt(8, 12+1));
     }
 
-    public static void main(String[] args) {
-        System.out.println(generatePassword(10));
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Введите длину пароля");
+        int len = 0;
+        while (len < 8 || len > 12) {
+            System.out.println("Длина пароля должна быть от 8 до 12 влючительно");
+            len = Integer.parseInt(reader.readLine());
+        }
+        System.out.println(generatePassword(len));
     }
 }

@@ -33,7 +33,7 @@ public class CurrencyConverter {
         } catch (NullPointerException ex) {
             throw new IllegalArgumentException("Can't convert " + to.getDisplayName());
         }
-        return res;
+        return res.setScale(2, RoundingMode.HALF_UP);
     }
 
     public boolean isCurrencyAvailable(String currency) {
@@ -56,4 +56,5 @@ public class CurrencyConverter {
         }
         return res;
     }
+
 }

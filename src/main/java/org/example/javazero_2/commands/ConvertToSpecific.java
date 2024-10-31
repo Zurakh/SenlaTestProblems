@@ -21,6 +21,12 @@ public class ConvertToSpecific implements Command{
     public void execute() throws IOException {
         System.out.print("Enter value: ");
         String valueStr = reader.readLine();
+
+        if (!valueStr.chars().allMatch(Character::isDigit)) {
+            System.out.println("Incorrect value");
+            return;
+        }
+
         BigDecimal value = new BigDecimal(valueStr);
 
         System.out.print("Enter currency converting from: ");
